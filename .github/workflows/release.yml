@@ -1,5 +1,5 @@
 name: Mobile release
-run-name: ${{ inputs.platform }} · ${{ inputs.submit && 'build and upload' || 'build only' }}
+run-name: ${{ inputs.platform }} release · iOS auto-submits to TestFlight
 on:
   workflow_dispatch:
     inputs:
@@ -10,7 +10,7 @@ on:
         default: ios
         options: [ios, android, all]
       submit:
-        description: Upload successful builds to App Store Connect / Google Play
+        description: Also upload successful Android builds to Google Play
         type: boolean
         default: false
       android_track:
@@ -62,7 +62,7 @@ jobs:
       EXPO_PUBLIC_PRIVACY_URL: ${{ vars.EXPO_PUBLIC_PRIVACY_URL }}
       EXPO_PUBLIC_SUPPORT_URL: ${{ vars.EXPO_PUBLIC_SUPPORT_URL }}
       RELEASE_PLATFORM: ${{ matrix.platform }}
-      RELEASE_SUBMIT: ${{ inputs.submit }}
+      RELEASE_SUBMIT: ${{ matrix.platform == 'ios' || inputs.submit }}
       RELEASE_ANDROID_TRACK: ${{ inputs.android_track }}
     steps:
       - uses: actions/checkout@v5
@@ -86,14 +86,19 @@ jobs:
           eas-version: 27.11.0
           token: ${{ secrets.EXPO_TOKEN }}
       - name: Build signed app on EAS
-        run: eas build --platform "$RELEASE_PLATFORM" --profile production --non-interactive --wait --json > "$RUNNER_TEMP/build.json"
+        run: |
+          args=(build --platform "$RELEASE_PLATFORM" --profile production --non-interactive --wait --json)
+          if [ "$RELEASE_PLATFORM" = "ios" ]; then
+            args+=(--auto-submit-with-profile production)
+          fi
+          eas "${args[@]}" > "$RUNNER_TEMP/build.json"
       - name: Record exact successful build
         id: build
         env:
           BUILD_RESULT_PATH: ${{ runner.temp }}/build.json
         run: node scripts/ci-release.cjs result
-      - name: Upload this build to the selected store
-        if: inputs.submit
+      - name: Upload Android build to Google Play
+        if: matrix.platform == 'android' && inputs.submit
         env:
           BUILD_ID: ${{ steps.build.outputs.id }}
         run: eas submit --platform "$RELEASE_PLATFORM" --profile production --id "$BUILD_ID" --non-interactive --wait

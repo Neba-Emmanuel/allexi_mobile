@@ -9,7 +9,7 @@ npm start
 
 Build a development app with `npm run ios` (macOS/Xcode) or `npm run android` (Android SDK/JDK). Rebuild after adding native modules. Production uses the `production` profile in `eas.json`.
 
-[GitHub Actions build and store upload setup](docs/CI_CD.md) explains how to build iOS, Android, or both, and optionally upload the exact builds to App Store Connect/TestFlight or Google Play. The workflows live in this repository's `.github/workflows/` directory.
+[GitHub Actions build and store upload setup](docs/CI_CD.md) explains how to build iOS, Android, or both, with automatic EAS submission of iOS builds to TestFlight and optional Android uploads to Google Play. The workflows live in this repository's `.github/workflows/` directory.
 
 Copy `.env.example` to `.env` for development. Production requires real HTTPS Supabase/API/privacy/support URLs and a public Supabase key. Account credentials and store signing keys are configured through Expo and GitHub secrets, not committed to the repository.
 

@@ -17,7 +17,8 @@
     "test:release": "node --test scripts/ci-release.test.cjs",
     "eas-build-pre-install": "node scripts/validate-build.cjs",
     "preexport:all": "node scripts/validate-build.cjs",
-    "preexport:web": "node scripts/validate-build.cjs"
+    "preexport:web": "node scripts/validate-build.cjs",
+    "release:ios": "eas build --platform ios --profile production --auto-submit-with-profile production"
   },
   "dependencies": {
     "@expo-google-fonts/newsreader": "^0.4.0",
