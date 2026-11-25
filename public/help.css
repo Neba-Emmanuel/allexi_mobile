@@ -1,0 +1,27 @@
+:root { color-scheme: light dark; --bg:#fbf9f5; --text:#252e27; --muted:#596452; --green:#1e3a2f; --gold:#806124; --line:#dedfd4; --surface:#eef0e6; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:1rem/1.8 system-ui,sans-serif; }
+a { color:var(--green); text-underline-offset:.25em; overflow-wrap:anywhere; }
+a:focus-visible { outline:3px solid var(--gold); outline-offset:5px; border-radius:3px; }
+header,footer { max-width:1100px; margin:auto; padding:28px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+header { border-bottom:1px solid var(--line); }
+.brand { text-decoration:none; font:1.8rem/1.2 Georgia,serif; }
+.brand span { display:block; font:.65rem/2.5 system-ui,sans-serif; letter-spacing:.2em; color:var(--muted); }
+nav { display:flex; gap:28px; }
+nav a { text-decoration:none; padding:8px 0; }
+nav a[aria-current] { border-bottom:2px solid var(--gold); }
+main { width:min(100% - 48px,740px); margin:70px auto; }
+.eyebrow { color:var(--gold); text-transform:uppercase; letter-spacing:.16em; font-size:.875rem; font-weight:600; }
+h1 { font:clamp(2.6rem,7vw,4.2rem)/1.1 Georgia,serif; letter-spacing:-.035em; margin:24px 0; max-width:680px; }
+.intro { font-size:1.2rem; color:var(--muted); margin-bottom:32px; }
+.updated { color:var(--muted); font-size:.9rem; }
+section { border-top:1px solid var(--line); padding:24px 0 12px; }
+h2 { font-size:1.2rem; line-height:1.5; margin:0 0 12px; }
+p { margin:0 0 20px; }
+aside { background:var(--surface); border-radius:16px; padding:32px; margin-top:32px; }
+aside h2 { font:2rem Georgia,serif; }
+.actions { display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
+.button { display:inline-block; background:#1e3a2f; color:#fff; text-decoration:none; padding:12px 24px; border-radius:6px; }
+footer { border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; }
+@media(prefers-color-scheme:dark) { :root { --bg:#141b17; --text:#eae9df; --muted:#b1beb1; --green:#afccb7; --gold:#ceb16c; --line:#344139; --surface:#202c24; } }
+@media(max-width:480px) { header,footer { padding:24px; } main { margin:40px auto; } nav { gap:20px; } aside { padding:24px; } }

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Image, Linking, Pressable, TextInput, View } from "react-native";
+import { Image, Pressable, TextInput, View } from "react-native";
 import { useContent } from "../lib/content";
 import { useStore } from "../lib/store";
 import { apiUrl, supabase, deleteAccount } from "../lib/auth";
 import { Button, Icon, Label, Sheet, Txt, styles, useTheme } from "./ui";
 import About from "./About";
+import Help, { type HelpPage } from "./Help";
 import AccountRecovery from "./AccountRecovery";
 
 export default function Settings({
@@ -26,9 +27,11 @@ export default function Settings({
     [showAbout, setShowAbout] = useState(false),
     [recovering, setRecovering] = useState(false),
     [deleting, setDeleting] = useState(false);
+  const [helpPage, setHelpPage] = useState<HelpPage | null>(null);
   useEffect(() => {
     if (!visible) {
       setShowAbout(false);
+      setHelpPage(null);
       setRecovering(false);
       setDeleting(false);
       setPassword("");
@@ -79,6 +82,12 @@ export default function Settings({
       setBusy(false);
     }
   }
+  if (helpPage)
+    return (
+      <Sheet visible={visible} title={helpPage === "support" ? "Support" : "Privacy policy"} onClose={onClose}>
+        <Help key={helpPage} page={helpPage} onBack={() => setHelpPage(null)} onNavigate={setHelpPage} />
+      </Sheet>
+    );
   if (recovering)
     return (
       <Sheet visible={visible} title="Recover your account" onClose={onClose}>
@@ -312,30 +321,12 @@ export default function Settings({
         are used to provide account access and sync. You can permanently delete
         your account and synced study data here.
       </Txt>
-      {process.env.EXPO_PUBLIC_PRIVACY_URL ? (
-        <Button
-          secondary
-          onPress={() =>
-            void Linking.openURL(process.env.EXPO_PUBLIC_PRIVACY_URL!).catch(
-              () => setMessage("The privacy page could not be opened."),
-            )
-          }
-        >
-          Privacy policy
-        </Button>
-      ) : null}
-      {process.env.EXPO_PUBLIC_SUPPORT_URL ? (
-        <Button
-          secondary
-          onPress={() =>
-            void Linking.openURL(process.env.EXPO_PUBLIC_SUPPORT_URL!).catch(
-              () => setMessage("The support page could not be opened."),
-            )
-          }
-        >
-          Get support
-        </Button>
-      ) : null}
+      <Button secondary icon="help-circle" onPress={() => setHelpPage("support")}>
+        Get support
+      </Button>
+      <Button secondary icon="shield" onPress={() => setHelpPage("privacy")}>
+        Privacy policy
+      </Button>
       <Label>READING EDITION</Label>
       <Txt muted style={{ fontSize: 12 }}>
         {editionName}

@@ -1,0 +1,28 @@
+{
+  "email": "Allexhairdrick@icloud.com",
+  "support": {
+    "title": "A little help, whenever you need it.",
+    "intro": "Questions about reading, your account, or a passage? We’re here to help.",
+    "sections": [
+      { "title": "Reading & editions", "body": "Allexi Bible is the default reading edition. Some chapters are still being prepared. Open the edition picker in the reader to see the available editions." },
+      { "title": "Syncing your study", "body": "Reading does not require an account. To keep notes, bookmarks, highlights and your reading place together across devices, sign in to the same account, connect to the internet and choose Sync now in Settings." },
+      { "title": "Recovering your account", "body": "Choose Forgot password in Settings and enter your account email. Use the recovery code in your email to set a new password. Check your spam folder if the message has not arrived." },
+      { "title": "Deleting your account", "body": "Sign in, open Settings and choose Delete my account. Confirm with your current password. This permanently removes your account and synced study data, and clears that account’s study data from the device making the request. If you cannot sign in, email support with the subject Account deletion from your account email. We may need to verify that the account belongs to you." },
+      { "title": "Reporting a passage or a problem", "body": "For a passage, include the edition, book, chapter and verse. For an app problem, include your device model, app version and what happened. Please do not send passwords, recovery codes or private study notes." }
+    ]
+  },
+  "privacy": {
+    "title": "Your reading. Your privacy.",
+    "intro": "This policy describes how Allexi Bible handles information when you read, study and use an optional account.",
+    "updated": "25 November 2026",
+    "sections": [
+      { "title": "Reading without an account", "body": "You can read without creating an account. Your reading preferences and study annotations are kept in the app. The app does not include advertising, analytics tracking, or location or microphone collection." },
+      { "title": "Account information", "body": "If you create an account, your email address and password are processed by Supabase Auth to provide sign-in and recovery. On iOS and Android, sign-in sessions use the operating system’s secure storage. On the web, sessions use browser storage." },
+      { "title": "What sync shares", "body": "When signed in, your notes, bookmarks, highlights and reading position are sent to our application service and stored in Supabase to make them available across your devices. Account access controls restrict access to your study records. We use this information to provide account access and sync." },
+      { "title": "Service providers & technical information", "body": "Supabase provides authentication and database services. Our hosting and email providers process information needed to run the service, including account recovery messages. Application logs contain request identifiers, route paths, status codes and durations. Hosting providers may also process network addresses and access logs. The application does not log passwords, access tokens or study content." },
+      { "title": "Retention & account deletion", "body": "Your account and synced study data are retained while your account is active. You can permanently delete them in Settings after confirming your current password, which is used to verify the request and is not stored by our application service. Deletion also clears that account’s study data from the requesting device. Other devices may retain local copies until removed there. Published scripture and editorial revision history remain, with the deleted editor’s account link removed. Provider backups may persist under the provider’s retention arrangements; deletion does not immediately erase every backup copy." },
+      { "title": "Your choices & questions", "body": "You can use the app without an account and choose whether to use account sync. For privacy questions, access or correction requests, or help deleting an account you cannot access, contact the support email below. Account-related requests may require ownership verification. Never send your password or recovery code." },
+      { "title": "Policy updates", "body": "We may update this policy when the app or its data practices change. The date shown here identifies the latest revision. Contact us if you have a question about a change." }
+    ]
+  }
+}
