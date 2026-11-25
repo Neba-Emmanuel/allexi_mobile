@@ -115,3 +115,32 @@ test("submission selects exactly one successful build of the requested platform"
   ])
     assert.throws(() => successfulBuild(value, "ios"));
 });
+
+test("credential/config inspection succeeds without deployment settings in production profiles", () => {
+  const config = require("../app.config.js");
+  const previous = process.env.APP_ENV;
+  try {
+    process.env.APP_ENV = "production";
+    const metadata = {
+      name: "Allexi Bible",
+      ios: { bundleIdentifier: "com.allexi.bible" },
+    };
+    assert.equal(config({ config: metadata }), metadata);
+  } finally {
+    if (previous === undefined) delete process.env.APP_ENV;
+    else process.env.APP_ENV = previous;
+  }
+});
+test("production builds still reject missing deployment settings while development is allowed", () => {
+  const { validateBuild } = require("./validate-build.cjs");
+  assert.doesNotThrow(() => validateBuild({}));
+  assert.throws(
+    () => validateBuild({ APP_ENV: "production" }),
+    /Release requires/,
+  );
+  assert.throws(
+    () => validateBuild({ EAS_BUILD_PROFILE: "production" }),
+    /Release requires/,
+  );
+  assert.doesNotThrow(() => validateBuild({ ...env, APP_ENV: "production" }));
+});

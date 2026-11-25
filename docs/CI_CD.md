@@ -70,3 +70,9 @@ Only the manually dispatched release workflow receives credentials. Normal push/
 - [Expo builds on CI](https://docs.expo.dev/build/building-on-ci/)
 - [App Store Connect API-key setup](https://docs.expo.dev/submit/ios/#automate-with-expo-workflows)
 - [Google Play submission setup](https://docs.expo.dev/submit/android/)
+
+## Credential setup: config command exits with code 1
+
+If `eas credentials --platform ios` fails when running `expo config --json`, first run `APP_ENV=production npx expo config --json` inside this app folder to check configuration inspection. App metadata must be readable without deployment URLs: EAS selects the production environment even when it is only managing signing credentials.
+
+Release settings are checked by `eas-build-pre-install`, the npm production export hooks, `npm run check:release`, and pipeline preflight. They are intentionally not checked by `app.config.js`. Missing production URLs still stop a real production build, but do not prevent generating certificates. After updating, rerun `eas credentials --platform ios` and select `production`.
