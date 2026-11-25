@@ -1,6 +1,6 @@
 import React, { useDeferredValue, useMemo, useState } from "react";
 import { FlatList, Pressable, TextInput, View } from "react-native";
-import type { Passage } from "@allexi/shared";
+import type { Passage } from "../../shared/src/index";
 import { reference } from "../data/bible";
 import { useContent } from "../lib/content";
 import {

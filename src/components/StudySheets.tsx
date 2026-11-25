@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Pressable, TextInput } from "react-native";
 import * as Clipboard from "expo-clipboard";
-import { colors, type Passage, type Verse } from "@allexi/shared";
+import { colors, type Passage, type Verse } from "../../shared/src/index";
 import { books, reference } from "../data/bible";
 import { useContent, readerEditionLabels } from "../lib/content";
 import { useStore } from "../lib/store";

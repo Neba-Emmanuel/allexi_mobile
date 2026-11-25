@@ -1,1 +1,1 @@
-export * from "../../../allexi_backend/shared/src/scripture";
+export * from "../../shared/src/scripture";

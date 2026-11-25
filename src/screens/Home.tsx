@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Pressable, useWindowDimensions } from "react-native";
-import type { Passage } from "@allexi/shared";
+import type { Passage } from "../../shared/src/index";
 import { useContent, readerEditionLabels } from "../lib/content";
 import { useStore } from "../lib/store";
 import { books, names, reference } from "../data/bible";

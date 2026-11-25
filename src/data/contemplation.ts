@@ -1,5 +1,5 @@
 import { allVerses } from "./bible";
-import type { Verse } from "@allexi/shared";
+import type { Verse } from "../../shared/src/index";
 
 // Use the local calendar date so the passage remains stable across reloads
 // and changes at the reader's midnight rather than at midnight UTC.

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FlatList, View, Pressable } from "react-native";
-import type { Passage, Verse } from "@allexi/shared";
-import { colors } from "@allexi/shared";
+import type { Passage, Verse } from "../../shared/src/index";
+import { colors } from "../../shared/src/index";
 import { useContent } from "../lib/content";
 import { useStore } from "../lib/store";
 import { reference } from "../data/bible";

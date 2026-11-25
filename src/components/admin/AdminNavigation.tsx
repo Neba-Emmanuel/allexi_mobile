@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Pressable, ScrollView, TextInput, View } from "react-native";
 import { books } from "../../data/bible";
-import type { ChapterProgress } from "../../../../allexi_backend/shared/src/content";
+import type { ChapterProgress } from "../../../shared/src/content";
 import { Card, Icon, Label, Txt, font, styles, useTheme } from "../ui";
 
 export default function AdminNavigation({

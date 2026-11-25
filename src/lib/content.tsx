@@ -14,7 +14,7 @@ import {
   publishedBible,
   type ContentSnapshot,
   type Edition,
-} from "../../../allexi_backend/shared/src/content";
+} from "../../shared/src/content";
 import { names } from "../data/bible";
 import { useStore } from "./store";
 import { apiUrl, supabase } from "./auth";

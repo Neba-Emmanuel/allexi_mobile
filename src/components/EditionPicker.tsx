@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, View } from "react-native";
-import type { Edition } from "../../../allexi_backend/shared/src/content";
+import type { Edition } from "../../shared/src/content";
 import { useContent, readerEditionNames } from "../lib/content";
 import { Icon, Label, Sheet, Txt, styles, useTheme } from "./ui";
 

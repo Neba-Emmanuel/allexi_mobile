@@ -10,7 +10,7 @@ import {
 import type {
   EditorialChapter,
   EditorialHistory,
-} from "../../../../allexi_backend/shared/src/content";
+} from "../../../shared/src/content";
 import { chapterVerses, names, reference } from "../../data/bible";
 import { Button, Card, Icon, Label, Txt, font, styles, useTheme } from "../ui";
 

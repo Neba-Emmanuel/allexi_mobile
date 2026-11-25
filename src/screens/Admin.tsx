@@ -18,7 +18,7 @@ import {
   type Edition,
   type EditorialChapter,
   type EditorialHistory,
-} from "../../../allexi_backend/shared/src/content";
+} from "../../shared/src/content";
 import { useStore } from "../lib/store";
 import { adminRequest, ContentApiError, useContent } from "../lib/content";
 import { apiUrl, supabase } from "../lib/auth";

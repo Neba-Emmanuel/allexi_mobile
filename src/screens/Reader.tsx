@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, Pressable, ScrollView } from "react-native";
-import type { Passage, Verse } from "@allexi/shared";
-import { colors } from "@allexi/shared";
+import type { Passage, Verse } from "../../shared/src/index";
+import { colors } from "../../shared/src/index";
 import { useStore } from "../lib/store";
 import { adjacent, chapterVerses, names } from "../data/bible";
 import { useContent, readerEditionLabels } from "../lib/content";

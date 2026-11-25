@@ -4,16 +4,18 @@
   "private": true,
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --dev-client",
     "web": "expo start --web",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "typecheck": "tsc --noEmit",
     "export:web": "expo export --platform web",
-    "export:all": "expo export --platform all"
+    "export:all": "expo export --platform all",
+    "postinstall": "patch-package --error-on-fail",
+    "check:release": "node --env-file-if-exists=.env scripts/check-release.cjs",
+    "sync:shared": "node scripts/sync-shared.cjs"
   },
   "dependencies": {
-    "@allexi/shared": "0.1.0",
     "@expo-google-fonts/newsreader": "^0.4.0",
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.0",
     "@expo/metro-runtime": "~55.0.12",
@@ -37,9 +39,16 @@
     "react-native-safe-area-context": "~5.6.2",
     "react-native-svg": "15.15.3",
     "react-native-url-polyfill": "^3.0.0",
-    "react-native-web": "~0.21.0"
+    "react-native-web": "~0.21.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/react": "~19.2.0"
+    "@types/react": "~19.2.0",
+    "@types/node": "^24.0.0",
+    "typescript": "~5.9.2",
+    "patch-package": "^8.0.1"
+  },
+  "engines": {
+    "node": ">=24 <25"
   }
 }

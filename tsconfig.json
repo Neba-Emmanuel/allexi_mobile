@@ -3,12 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "paths": {
-      "@allexi/shared": [
-        "../allexi_backend/shared/src/index.ts"
-      ]
-    }
+    "allowImportingTsExtensions": true
   },
   "include": [
     "index.ts",

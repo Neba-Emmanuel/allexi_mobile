@@ -15,7 +15,7 @@ import { Newsreader_400Regular_Italic } from "@expo-google-fonts/newsreader/400R
 import { PlusJakartaSans_400Regular } from "@expo-google-fonts/plus-jakarta-sans/400Regular";
 import { PlusJakartaSans_500Medium } from "@expo-google-fonts/plus-jakarta-sans/500Medium";
 import { PlusJakartaSans_600SemiBold } from "@expo-google-fonts/plus-jakarta-sans/600SemiBold";
-import type { Passage, Verse } from "@allexi/shared";
+import type { Passage, Verse } from "../shared/src/index";
 import { StoreProvider, useStore } from "./lib/store";
 import {
   Button,

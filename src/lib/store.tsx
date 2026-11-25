@@ -16,7 +16,7 @@ import {
   type Mutation,
   type Passage,
   type SyncResponse,
-} from "@allexi/shared";
+} from "../../shared/src/index";
 import { readValue, writeValue } from "./storage";
 import { apiUrl, supabase } from "./auth";
 
