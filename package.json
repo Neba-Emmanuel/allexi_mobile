@@ -13,7 +13,8 @@
     "export:all": "expo export --platform all",
     "postinstall": "patch-package --error-on-fail",
     "check:release": "node --env-file-if-exists=.env scripts/check-release.cjs",
-    "sync:shared": "node scripts/sync-shared.cjs"
+    "sync:shared": "node scripts/sync-shared.cjs",
+    "test:release": "node --test scripts/ci-release.test.cjs"
   },
   "dependencies": {
     "@expo-google-fonts/newsreader": "^0.4.0",

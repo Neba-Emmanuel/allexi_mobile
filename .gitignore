@@ -1,2 +1,15 @@
 node_modules/
 
+.expo/
+.env
+.env.*
+!.env.example
+artifacts/
+dist/
+dist-native/
+*.log
+*.p8
+*.p12
+*.mobileprovision
+credentials.json
+.DS_Store
