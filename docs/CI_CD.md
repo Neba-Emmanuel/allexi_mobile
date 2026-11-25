@@ -90,3 +90,17 @@ npm run release:ios
 The local command can prompt for missing credentials/app information. It does not perform the GitHub-specific preflight or inject GitHub variables; configure the production environment and submission credentials first.
 
 Reference: [Expo automatic submissions](https://docs.expo.dev/build/automate-submissions/).
+
+## TestFlight encryption declaration
+
+The current app uses platform HTTPS/keychain services and does not implement custom encryption algorithms. `ITSAppUsesNonExemptEncryption` is explicitly `false` in the tracked native `ios/AllexiBible/Info.plist` and in `expo.ios.infoPlist`; the Expo `ios.config.usesNonExemptEncryption` flag remains `false` as well. The native entry matters because this repository includes an iOS project, so cloud builds do not necessarily regenerate it from app.json.
+
+This declaration is for the current encryption usage; reassess it if custom encryption is added. For the already uploaded build 2, complete its App Store Connect encryption questionnaire. Source changes cannot alter an existing uploaded binary. Push these changes and run a new iOS release for the declaration to be embedded in the next binary.
+
+## Apple SDK warning ITMS-90725
+
+Apple's notice for build 2 reports the iOS 26.2 SDK and a new iOS 27 SDK requirement starting April 2027. This is separate from encryption compliance. The app is on Expo SDK 55, whose default EAS image uses Xcode 26.2. Expo warns that Xcode 27 images require the UIKit scene lifecycle and advises older Expo SDKs to use their SDK-specific image. Do not change only the iOS deployment target or blindly pin `latest`: neither is a tested SDK/native migration.
+
+The remaining work is an Expo/native upgrade with scene support, then choosing a documented Xcode 27+ image and testing a signed device build before uploading. The encryption fix does not resolve or claim to resolve this SDK warning.
+
+References: [Apple encryption documentation](https://developer.apple.com/help/app-store-connect/manage-app-information/determine-and-upload-app-encryption-documentation/), [Expo build images and Xcode 27 compatibility](https://docs.expo.dev/build-reference/infrastructure/).

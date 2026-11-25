@@ -12,6 +12,9 @@
       "bundleIdentifier": "com.allexi.bible",
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
