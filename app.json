@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Allexi Bible",
+    "slug": "allexi-bible",
+    "scheme": "allexi",
+    "version": "0.1.0",
+    "icon": "./assets/icon.png",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.allexi.bible",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.allexi.bible",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#132F25",
+        "monochromeImage": "./assets/monochrome-icon.png"
+      },
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
+    },
+    "web": {
+      "name": "Allexi Bible",
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-font",
+      "expo-dev-client",
+      "./plugins/withPodDeploymentTargets.cjs",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#132F25",
+          "image": "./assets/splash-mark.png",
+          "imageWidth": 240,
+          "resizeMode": "contain",
+          "dark": {
+            "backgroundColor": "#132F25",
+            "image": "./assets/splash-mark.png"
+          }
+        }
+      ],
+      "expo-secure-store"
+    ]
+  }
+}

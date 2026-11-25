@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="forest" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#274D3A"/><stop offset="1" stop-color="#102A20"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F1DEA9"/><stop offset="1" stop-color="#C8AA68"/></linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#forest)"/>
+  <circle cx="512" cy="480" r="415" fill="#D6BC7D" opacity=".025"/>
+  <g fill="none" stroke="url(#gold)" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M224 880V424a288 288 0 0 1 576 0v456Z" stroke-width="3" opacity=".55"/>
+    <path d="M244 860V424a268 268 0 0 1 536 0v436Z" stroke-width="2" opacity=".18"/>
+    <path d="M512 254v71m-137-38 44 56m230-56-44 56m-293 29 66 14m334-14-66 14" stroke-width="6" opacity=".95"/>
+    <path d="M512 469c-71-51-151-62-248-41v277c97-21 177-10 248 42 71-52 151-63 248-42V428c-97-21-177-10-248 41Z" fill="#244735" stroke-width="12"/>
+    <path d="M512 469v278" stroke-width="10"/>
+    <path d="M306 488c57-5 108 5 157 30m-157 31c57-5 108 5 157 30m-157 31c57-5 108 5 157 30m255-152c-57-5-108 5-157 30m157 31c-57-5-108 5-157 30m157 31c-57-5-108 5-157 30" stroke-width="5" opacity=".65"/>
+    <path d="M264 733c97-21 177-10 248 42 71-52 151-63 248-42" stroke-width="6" opacity=".6"/>
+    <path d="M472 818h80" stroke-width="4" opacity=".65"/>
+  </g>
+</svg>
