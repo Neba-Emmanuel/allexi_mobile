@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextInput, View } from "react-native";
-import { supabase } from "../lib/auth";
+import { supabase, verifyAdministrator } from "../lib/auth";
 import { Button, Txt, styles, useTheme } from "./ui";
 export default function AccountRecovery({ onBack }: { onBack: () => void }) {
   const t = useTheme();
@@ -33,6 +33,13 @@ export default function AccountRecovery({ onBack }: { onBack: () => void }) {
             type: "recovery",
           });
           if (result.error) throw result.error;
+          try {
+            if (!result.data.session) throw new Error("Recovery could not be verified.");
+            await verifyAdministrator(result.data.session);
+          } catch (error) {
+            await supabase.auth.signOut({ scope: "local" });
+            throw error;
+          }
           setVerified(true);
         }
         const result = await supabase.auth.updateUser({ password });

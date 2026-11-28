@@ -21,5 +21,7 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
+      - run: npm run version:check
+      - run: npm run test:version
       - run: npm run test:release
       - run: npm run export:all

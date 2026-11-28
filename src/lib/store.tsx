@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import * as Crypto from "expo-crypto";
 import type { Session } from "@supabase/supabase-js";
@@ -18,7 +18,7 @@ import {
   type SyncResponse,
 } from "../../shared/src/index";
 import { readValue, writeValue } from "./storage";
-import { apiUrl, supabase } from "./auth";
+import { apiUrl, supabase, verifyAdministrator } from "./auth";
 
 type Preferences = {
   dark: boolean;
@@ -96,12 +96,27 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let live = true;
     void exclusive(async () => {
-      const [p, auth] = await Promise.all([
+      const [p, nativeScope] = await Promise.all([
         readValue<Preferences>("preferences"),
-        supabase?.auth.getSession(),
+        Platform.OS === "web" ? Promise.resolve(null) : readValue<string>("readerScope"),
       ]);
-      const s = auth?.data.session ?? null;
-      owner.current = s?.user.id ?? "guest";
+      const auth = Platform.OS === "web" || !nativeScope
+        ? await supabase?.auth.getSession()
+        : undefined;
+      const restored = auth?.data.session ?? null;
+      let s = Platform.OS === "web" ? restored : null;
+      if (s) {
+        try {
+          await verifyAdministrator(s);
+        } catch {
+          s = null;
+        }
+      }
+      // Preserve a previous native account’s annotations independently of its token.
+      owner.current = Platform.OS === "web"
+        ? s?.user.id ?? "guest"
+        : nativeScope ?? restored?.user.id ?? "guest";
+      if (Platform.OS !== "web") await writeValue("readerScope", owner.current);
       activeSession.current = s;
       rows.current =
         (await readValue<Annotation[]>(`records:${owner.current}`)) ?? [];
@@ -118,8 +133,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         state.isConnected !== false && state.isInternetReachable !== false,
       ),
     );
-    const auth = supabase?.auth.onAuthStateChange((_event, s) => {
+    const auth = Platform.OS === "web" ? supabase?.auth.onAuthStateChange((_event, session) => {
       void exclusive(async () => {
+        if (!live) return;
+        let s = session;
+        if (s) {
+          try {
+            await verifyAdministrator(s);
+          } catch {
+            s = null;
+          }
+        }
         if (!live) return;
         if (owner.current !== (s?.user.id ?? "guest")) {
           owner.current = s?.user.id ?? "guest";
@@ -146,11 +170,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         setSession(s);
         setSyncMessage("Your study is ready");
       });
-    }).data.subscription;
-    if (AppState.currentState === "active") supabase?.auth.startAutoRefresh();
+    }).data.subscription : undefined;
+    if (Platform.OS === "web" && AppState.currentState === "active") supabase?.auth.startAutoRefresh();
     const app = AppState.addEventListener("change", (state) => {
       if (state === "active") {
-        supabase?.auth.startAutoRefresh();
+        if (Platform.OS === "web") supabase?.auth.startAutoRefresh();
         setForeground((n) => n + 1);
       } else supabase?.auth.stopAutoRefresh();
     });
@@ -218,6 +242,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (result?.error) throw result.error;
   }
   async function sync() {
+    if (Platform.OS !== "web") return;
     if (busy.current || !activeSession.current || !apiUrl || !online) return;
     busy.current = true;
     setSyncing(true);
@@ -297,7 +322,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     .join(",");
   const pending = records.filter((r) => r.dirty).length;
   useEffect(() => {
-    if (!ready || !online || !session) return;
+    if (Platform.OS !== "web" || !ready || !online || !session) return;
     const timer = setTimeout(() => void sync(), 1400);
     const interval = setInterval(() => void sync(), 60000);
     return () => {

@@ -78,6 +78,8 @@ jobs:
         run: node scripts/ci-release.cjs prepare
       - name: Check types
         run: npm run typecheck
+      - name: Check local version consistency
+        run: npm run version:check
       - name: Check production JavaScript bundle
         run: npx --no-install expo export --platform "$RELEASE_PLATFORM" --output-dir "$RUNNER_TEMP/export"
       - name: Set up EAS CLI

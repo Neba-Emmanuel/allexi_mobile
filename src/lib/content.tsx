@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import {
   contentSnapshotSchema,
   bundledContent,
@@ -42,6 +42,8 @@ export async function adminRequest<T>(
   path: string,
   options: { method?: string; body?: unknown; signal?: AbortSignal } = {},
 ): Promise<T> {
+  if (Platform.OS !== "web")
+    throw new ContentApiError("Editorial access is available on the web only.", 403);
   if (!supabase || !apiUrl)
     throw new ContentApiError(
       "Connect Supabase and the Node API to manage scripture.",

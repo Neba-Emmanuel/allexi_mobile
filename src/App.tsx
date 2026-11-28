@@ -2,6 +2,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import React, { useCallback, useState } from "react";
 import {
   Text,
+  Platform,
   Pressable,
   ScrollView,
   View,
@@ -104,7 +105,7 @@ function Main({ showStatusBar }: { showStatusBar: boolean }) {
     setTestament(test);
     setSelector(true);
   }
-  if (adminOpen)
+  if (Platform.OS === "web" && adminOpen)
     return (
       <Admin
         onClose={() => {
@@ -436,7 +437,7 @@ function Main({ showStatusBar }: { showStatusBar: boolean }) {
         onClose={() => setSettings(false)}
         onAdmin={() => {
           setSettings(false);
-          setAdminOpen(true);
+          if (Platform.OS === "web") setAdminOpen(true);
         }}
       />
       <EditionPicker

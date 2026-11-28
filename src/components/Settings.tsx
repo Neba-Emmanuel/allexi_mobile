@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, TextInput, View } from "react-native";
+import { Image, Platform, Pressable, TextInput, View } from "react-native";
 import { useContent } from "../lib/content";
 import { useStore } from "../lib/store";
-import { apiUrl, supabase, deleteAccount } from "../lib/auth";
+import { apiUrl, supabase, deleteAccount, verifyAdministrator } from "../lib/auth";
 import { Button, Icon, Label, Sheet, Txt, styles, useTheme } from "./ui";
 import About from "./About";
 import Help, { type HelpPage } from "./Help";
 import AccountRecovery from "./AccountRecovery";
+import { appVersion } from "../data/version";
 
 export default function Settings({
   visible,
@@ -38,25 +39,20 @@ export default function Settings({
       setMessage("");
     }
   }, [visible]);
-  async function authenticate(signup: boolean) {
-    if (!supabase) return;
+  async function authenticate() {
+    if (Platform.OS !== "web" || !supabase || busy) return;
     setBusy(true);
     setMessage("");
     try {
-      const result = signup
-        ? await supabase.auth.signUp({ email: email.trim(), password })
-        : await supabase.auth.signInWithPassword({
-            email: email.trim(),
-            password,
-          });
+      const result = await supabase.auth.signInWithPassword({
+        email: email.trim(), password,
+      });
       if (result.error) throw result.error;
+      await verifyAdministrator(result.data.session);
       setPassword("");
-      setMessage(
-        signup && !result.data.session
-          ? "Check your email to confirm your account, then sign in here."
-          : "Signed in. Your library is ready to sync.",
-      );
+      setMessage("Administrator signed in. Open the admin workspace to manage scripture.");
     } catch (e) {
+      await supabase.auth.signOut({ scope: "local" });
       setMessage(e instanceof Error ? e.message : "Could not sign in");
     } finally {
       setBusy(false);
@@ -88,7 +84,7 @@ export default function Settings({
         <Help key={helpPage} page={helpPage} onBack={() => setHelpPage(null)} onNavigate={setHelpPage} />
       </Sheet>
     );
-  if (recovering)
+  if (Platform.OS === "web" && recovering)
     return (
       <Sheet visible={visible} title="Recover your account" onClose={onClose}>
         <AccountRecovery onBack={() => setRecovering(false)} />
@@ -134,6 +130,8 @@ export default function Settings({
         </View>
         <Icon name="chevron-right" size={18} />
       </Pressable>
+      {Platform.OS === "web" ? (
+      <>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Admin workspace"
@@ -158,10 +156,10 @@ export default function Settings({
         </View>
         <Icon name="chevron-right" size={18} />
       </Pressable>
-      <Label>OPTIONAL CLOUD SYNC</Label>
+      <Label>ADMINISTRATOR ACCESS</Label>
       <Txt muted style={{ fontSize: 13 }}>
-        Keep your notes, bookmarks, highlights, and reading place together
-        across devices. Reading is always available without an account.
+        Sign in with an approved administrator account to update chapters and
+        verses. Reading does not require an account.
       </Txt>
       {!supabase || !apiUrl ? (
         <View
@@ -172,10 +170,10 @@ export default function Settings({
             gap: 8,
           }}
         >
-          <Txt>Cloud sync hasn’t been connected yet.</Txt>
+          <Txt>Administrator access hasn’t been connected yet.</Txt>
           <Txt muted style={{ fontSize: 12 }}>
-            You can continue reading and reflecting. Account sync will be
-            available once connected.
+            You can continue reading and reflecting. The editorial workspace
+            will be available once connected.
           </Txt>
         </View>
       ) : s.session ? (
@@ -285,20 +283,10 @@ export default function Settings({
           <View style={{ gap: 10 }}>
             <Button
               disabled={busy || !email || !password}
-              onPress={() => void authenticate(false)}
+              onPress={() => void authenticate()}
             >
-              Sign in & sync
+              Sign in as administrator
             </Button>
-            <Button
-              secondary
-              disabled={busy || !email || password.length < 12}
-              onPress={() => void authenticate(true)}
-            >
-              Create an account
-            </Button>
-            <Txt muted style={{ fontSize: 11 }}>
-              New accounts require a password of at least 12 characters.
-            </Txt>
             <Button
               secondary
               disabled={busy}
@@ -314,12 +302,13 @@ export default function Settings({
           {message}
         </Txt>
       ) : null}
+      </>
+      ) : null}
       <View style={{ height: 1, backgroundColor: t.line }} />
       <Label>PRIVACY & SUPPORT</Label>
       <Txt muted style={{ fontSize: 12 }}>
-        An account is optional. When signed in, your email and study annotations
-        are used to provide account access and sync. You can permanently delete
-        your account and synced study data here.
+        Read without an account. Contact us for help, privacy questions, or
+        account deletion requests.
       </Txt>
       <Button secondary icon="help-circle" onPress={() => setHelpPage("support")}>
         Get support
@@ -333,7 +322,7 @@ export default function Settings({
         {edition === "kjv" ? " · Modern spelling" : ""}
       </Txt>
       <Txt muted style={{ fontSize: 11 }}>
-        Allexi Bible · Edition 0.1
+        Allexi Bible · Version {appVersion}
       </Txt>
     </Sheet>
   );

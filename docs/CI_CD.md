@@ -31,7 +31,7 @@ npx eas-cli@27.11.0 credentials --platform android
 
 For iOS, assign an **App Store Connect API key** for Expo Submit; the `.p8` private key is stored in Expo credentials and never committed here. An API key authenticates uploads; signed builds also need the distribution certificate/provisioning profile configured above. Create the App Store Connect app record for `com.allexi.bible` and record its numeric Apple ID.
 
-For Android, create the Play Console app and configure a **Google service account key for Play Store submissions** in EAS. Google requires the first app upload manually before API submissions work. Complete account/testing requirements before selecting a production rollout.
+For Android, create the Play Console app and configure a **Google service account key for Play Store submissions** in EAS. Current Expo Submit supports the first upload directly and creates the first release on the internal testing track; a manual first upload is optional. Complete Play Console account, listing and testing requirements before promoting a public production release. See [Expo Android submission](https://docs.expo.dev/submit/android/).
 
 ## GitHub settings
 
@@ -79,6 +79,8 @@ Release settings are checked by `eas-build-pre-install`, the npm production expo
 
 ## iOS auto-submit
 
+Use the [version utility](VERSIONING.md) to update the displayed release version and keep local native metadata aligned. The pipeline checks local consistency; EAS still owns and auto-increments store build numbers.
+
 Every iOS job in **Mobile release** now uses EAS auto-submit with the production submission profile. The App Store Connect API key must already be assigned in EAS and GitHub must have `ASC_APP_ID` configured. EAS uploads after a successful build, even if the GitHub connection later ends. Check the Expo submissions dashboard for upload status, then App Store Connect for processing and TestFlight availability. App Store review and public release remain separate.
 
 To request the same behavior locally, from the mobile folder run:
@@ -104,3 +106,10 @@ Apple's notice for build 2 reports the iOS 26.2 SDK and a new iOS 27 SDK require
 The remaining work is an Expo/native upgrade with scene support, then choosing a documented Xcode 27+ image and testing a signed device build before uploading. The encryption fix does not resolve or claim to resolve this SDK warning.
 
 References: [Apple encryption documentation](https://developer.apple.com/help/app-store-connect/manage-app-information/determine-and-upload-app-encryption-documentation/), [Expo build images and Xcode 27 compatibility](https://docs.expo.dev/build-reference/infrastructure/).
+
+
+## iPhone and iPad support
+
+Expo `ios.supportsTablet` is true and the tracked Xcode project sets `TARGETED_DEVICE_FAMILY = "1,2"` in Debug and Release. Keep both aligned because EAS builds the committed native project.
+
+Production builds support iPhone and iPad natively. App Store Connect therefore requires iPad screenshots, including the 13-inch iPad display slot. Run `npm run release:ios` from `allexi_mobile/` (or dispatch the iOS release workflow) to build and upload changes, then select the processed build in App Store Connect. Source changes do not alter an already-uploaded binary.

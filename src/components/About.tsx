@@ -2,6 +2,7 @@ import React from "react";
 import { Image, View } from "react-native";
 import { useContent } from "../lib/content";
 import { about } from "../data/about";
+import { appVersion } from "../data/version";
 import { Label, Txt, font, styles, useTheme } from "./ui";
 
 export default function About() {
@@ -84,7 +85,7 @@ export default function About() {
           ]}
         >
           <Txt muted style={{ fontSize: 10 }}>
-            Allexi Bible · Edition 0.1
+            Allexi Bible · Version {appVersion}
           </Txt>
           <Txt
             serif
