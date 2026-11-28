@@ -37,6 +37,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "applicationId": "com.allexi.bible",
+        "track": "internal",
+        "releaseStatus": "completed"
+      }
+    }
   }
 }

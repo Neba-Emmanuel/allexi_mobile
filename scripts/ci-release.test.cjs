@@ -3,7 +3,8 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { prepare, successfulBuild } = require("./ci-release.cjs");
+const { spawnSync } = require("node:child_process");
+const { prepare, successfulBuild, buildReference, checkAndroidCredentials } = require("./ci-release.cjs");
 const id = "00000000-0000-4000-8000-000000000001";
 const env = {
   RELEASE_PLATFORM: "ios",
@@ -21,7 +22,7 @@ function fixture(t) {
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   fs.writeFileSync(
     path.join(root, "app.json"),
-    JSON.stringify({ expo: { name: "Allexi", extra: { preserved: true } } }),
+    JSON.stringify({ expo: { name: "Allexi", android: { package: "com.allexi.bible" }, extra: { preserved: true } } }),
   );
   fs.writeFileSync(
     path.join(root, "eas.json"),
@@ -114,6 +115,75 @@ test("submission selects exactly one successful build of the requested platform"
     [],
   ])
     assert.throws(() => successfulBuild(value, "ios"));
+});
+
+test("auto-submit output may contain a cached build status; its exact ID must be refreshed", () => {
+  const cached = { id, platform: "IOS", status: "IN_QUEUE", submissions: [{ status: "FINISHED" }] };
+  assert.equal(buildReference([cached], "ios").id, id);
+  assert.throws(() => successfulBuild([cached], "ios", id), /not FINISHED/);
+  assert.equal(successfulBuild({ ...cached, status: "FINISHED" }, "ios", id).id, id);
+  assert.throws(() => successfulBuild({ ...cached, status: "FINISHED" }, "ios", "00000000-0000-4000-8000-000000000002"), /does not match/);
+  assert.throws(() => buildReference([cached, cached], "ios"), /exactly one/);
+});
+
+test("Android credential preflight checks the linked project and submission assignment without fetching key material", async (t) => {
+  const root = fixture(t);
+  const androidEnv = { ...env, RELEASE_PLATFORM: "android", RELEASE_SUBMIT: "true" };
+  let queried = false;
+  const request = async (_url, options) => {
+    queried = true;
+    const body = JSON.parse(options.body);
+    assert.equal(body.variables.appId, id);
+    assert.equal(body.variables.applicationId, "com.allexi.bible");
+    assert.equal(options.headers.Authorization, `Bearer ${env.EXPO_TOKEN}`);
+    assert.ok(!body.query.includes("privateKey"));
+    assert.ok(!body.query.includes("googleServiceAccountKeyJson"));
+    return new Response(JSON.stringify({ data: { app: { byId: {
+      id, androidAppCredentials: [{ applicationIdentifier: "com.allexi.bible", googleServiceAccountKeyForSubmissions: { id: "credential-id" } }],
+    } } } }));
+  };
+  await checkAndroidCredentials(root, androidEnv, request);
+  assert.equal(queried, true);
+  const missing = async () => new Response(JSON.stringify({ data: { app: { byId: { id, androidAppCredentials: [] } } } }));
+  await assert.rejects(checkAndroidCredentials(root, androidEnv, missing), /No Google Play submission key is assigned/);
+  const denied = async () => new Response(JSON.stringify({ errors: [{ message: "Not authorized" }] }));
+  await assert.rejects(checkAndroidCredentials(root, androidEnv, denied), /GitHub EXPO_TOKEN/);
+  await checkAndroidCredentials(root, { ...androidEnv, RELEASE_PLATFORM: "ios" }, async () => { throw new Error("iOS must not query Android credentials"); });
+});
+
+test("Android submission pins the native application identifier and rejects conflicting Expo metadata", (t) => {
+  const root = fixture(t);
+  const androidEnv = { ...env, RELEASE_PLATFORM: "android", RELEASE_SUBMIT: "true" };
+  prepare(root, androidEnv);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(root, "eas.json"))).submit.production.android.applicationId, "com.allexi.bible");
+  fs.mkdirSync(path.join(root, "android/app"), { recursive: true });
+  fs.writeFileSync(path.join(root, "android/app/build.gradle"), 'applicationId "com.other.app"');
+  assert.throws(() => prepare(root, androidEnv), /differs from app.json/);
+});
+
+test("result processing refreshes the same build ID and rejects an unrefreshed cached status", (t) => {
+  const root = fixture(t);
+  const resultPath = path.join(root, "build.json");
+  const output = path.join(root, "output");
+  const summary = path.join(root, "summary");
+  const processEnv = {
+    ...process.env, RELEASE_PLATFORM: "ios", RELEASE_SUBMIT: "true",
+    BUILD_RESULT_PATH: resultPath, GITHUB_OUTPUT: output, GITHUB_STEP_SUMMARY: summary,
+  };
+  const run = (command, extra = {}) => spawnSync(process.execPath, [path.join(__dirname, "ci-release.cjs"), command], {
+    cwd: root, env: { ...processEnv, ...extra }, encoding: "utf8",
+  });
+  fs.writeFileSync(resultPath, JSON.stringify([{ id, platform: "IOS", status: "IN_QUEUE" }]));
+  assert.equal(run("reference").status, 0);
+  assert.equal(fs.readFileSync(output, "utf8"), `id=${id}\n`);
+  const stale = run("result", { EXPECTED_BUILD_ID: id });
+  assert.equal(stale.status, 1);
+  assert.match(stale.stderr, /not FINISHED/);
+  assert.equal(fs.existsSync(summary), false);
+  fs.writeFileSync(resultPath, JSON.stringify({ id, platform: "IOS", status: "FINISHED" }));
+  const refreshed = run("result", { EXPECTED_BUILD_ID: id });
+  assert.equal(refreshed.status, 0, refreshed.stderr);
+  assert.match(fs.readFileSync(summary, "utf8"), /Build status: FINISHED \(refreshed by exact ID\)/);
 });
 
 test("credential/config inspection succeeds without deployment settings in production profiles", () => {

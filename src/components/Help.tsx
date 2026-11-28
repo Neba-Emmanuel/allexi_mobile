@@ -3,7 +3,8 @@ import { Linking, Pressable, View } from "react-native";
 import help from "../data/help.json";
 import { Button, Icon, Label, Txt, font, styles, useTheme } from "./ui";
 
-export type HelpPage = "support" | "privacy";
+export type HelpPage = "support" | "privacy" | "terms";
+const titles: Record<HelpPage, string> = { support: "Support", privacy: "Privacy policy", terms: "Terms of Service" };
 
 export default function Help({ page, onBack, onNavigate }: {
   page: HelpPage;
@@ -30,12 +31,12 @@ export default function Help({ page, onBack, onNavigate }: {
       </Pressable>
       <View style={{ gap: 16 }}>
         <View style={{ backgroundColor: t.soft, padding: 16, borderRadius: 16, alignSelf: "flex-start" }}>
-          <Icon name={page === "support" ? "help-circle" : "shield"} size={28} />
+          <Icon name={page === "support" ? "help-circle" : page === "privacy" ? "shield" : "file-text"} size={28} />
         </View>
-        <Label style={{ color: t.gold }}>{page === "support" ? "HERE TO HELP" : "PRIVACY POLICY"}</Label>
+        <Label style={{ color: t.gold }}>{page === "support" ? "HERE TO HELP" : titles[page].toUpperCase()}</Label>
         <Txt serif accessibilityRole="header" style={{ fontSize: 34, lineHeight: 41 }}>{content.title}</Txt>
         <Txt style={{ fontSize: 16, lineHeight: 26 }}>{content.intro}</Txt>
-        {page === "privacy" ? <Txt muted>Last updated {help.privacy.updated}</Txt> : null}
+        {"updated" in content ? <Txt muted>Last updated {content.updated}</Txt> : null}
       </View>
       {content.sections.map((section) => (
         <View key={section.title} style={{ gap: 10, paddingTop: 20, borderTopWidth: 1, borderColor: t.line }}>
@@ -50,9 +51,9 @@ export default function Help({ page, onBack, onNavigate }: {
         <Button secondary onPress={() => void contact(true)}>Request account deletion by email</Button>
         {message ? <Txt accessibilityRole="alert">{message}</Txt> : null}
       </View>
-      <Button secondary onPress={() => onNavigate(page === "support" ? "privacy" : "support")}>
-        {page === "support" ? "Read our privacy policy" : "Visit Support"}
-      </Button>
+      {(Object.keys(titles) as HelpPage[]).filter((destination) => destination !== page).map((destination) => (
+        <Button key={destination} secondary onPress={() => onNavigate(destination)}>{titles[destination]}</Button>
+      ))}
     </View>
   );
 }

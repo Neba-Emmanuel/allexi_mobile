@@ -41,6 +41,7 @@
       "expo-font",
       "expo-dev-client",
       "./plugins/withPodDeploymentTargets.cjs",
+      "./plugins/withAndroidOptimization.cjs",
       [
         "expo-splash-screen",
         {

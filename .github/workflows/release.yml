@@ -1,5 +1,5 @@
 name: Mobile release
-run-name: ${{ inputs.platform }} release · iOS auto-submits to TestFlight
+run-name: ${{ inputs.platform }} release · automatic store submission
 on:
   workflow_dispatch:
     inputs:
@@ -9,12 +9,8 @@ on:
         type: choice
         default: ios
         options: [ios, android, all]
-      submit:
-        description: Also upload successful Android builds to Google Play
-        type: boolean
-        default: false
       android_track:
-        description: Google Play destination (only when uploading Android)
+        description: Google Play destination for Android auto-submission
         type: choice
         default: internal
         options: [internal, production]
@@ -62,7 +58,7 @@ jobs:
       EXPO_PUBLIC_PRIVACY_URL: ${{ vars.EXPO_PUBLIC_PRIVACY_URL }}
       EXPO_PUBLIC_SUPPORT_URL: ${{ vars.EXPO_PUBLIC_SUPPORT_URL }}
       RELEASE_PLATFORM: ${{ matrix.platform }}
-      RELEASE_SUBMIT: ${{ matrix.platform == 'ios' || inputs.submit }}
+      RELEASE_SUBMIT: "true"
       RELEASE_ANDROID_TRACK: ${{ inputs.android_track }}
     steps:
       - uses: actions/checkout@v5
@@ -87,20 +83,25 @@ jobs:
         with:
           eas-version: 27.11.0
           token: ${{ secrets.EXPO_TOKEN }}
+      - name: Check Android Play submission key assignment
+        if: matrix.platform == 'android'
+        run: node scripts/ci-release.cjs credentials
       - name: Build signed app on EAS
         run: |
-          args=(build --platform "$RELEASE_PLATFORM" --profile production --non-interactive --wait --json)
-          if [ "$RELEASE_PLATFORM" = "ios" ]; then
-            args+=(--auto-submit-with-profile production)
-          fi
+          args=(build --platform "$RELEASE_PLATFORM" --profile production --auto-submit-with-profile production --non-interactive --wait --json)
           eas "${args[@]}" > "$RUNNER_TEMP/build.json"
+      - name: Identify the exact build from EAS output
+        id: reference
+        env:
+          BUILD_RESULT_PATH: ${{ runner.temp }}/build.json
+        run: node scripts/ci-release.cjs reference
+      - name: Refresh the exact build status
+        env:
+          BUILD_ID: ${{ steps.reference.outputs.id }}
+        run: eas build:view "$BUILD_ID" --json > "$RUNNER_TEMP/build-verified.json"
       - name: Record exact successful build
         id: build
         env:
-          BUILD_RESULT_PATH: ${{ runner.temp }}/build.json
+          BUILD_RESULT_PATH: ${{ runner.temp }}/build-verified.json
+          EXPECTED_BUILD_ID: ${{ steps.reference.outputs.id }}
         run: node scripts/ci-release.cjs result
-      - name: Upload Android build to Google Play
-        if: matrix.platform == 'android' && inputs.submit
-        env:
-          BUILD_ID: ${{ steps.build.outputs.id }}
-        run: eas submit --platform "$RELEASE_PLATFORM" --profile production --id "$BUILD_ID" --non-interactive --wait

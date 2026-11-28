@@ -60,5 +60,48 @@
         "body": "We may update this policy when the app or its data practices change. The date shown here identifies the latest revision. Contact us if you have a question about a change."
       }
     ]
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "intro": "These terms apply to the Allexi Bible mobile app and website. By using the service, you agree to these terms. If you do not agree, please stop using the service.",
+    "updated": "28 November 2026",
+    "sections": [
+      {
+        "title": "Reading and using the app",
+        "body": "Allexi Bible provides scripture reading and personal study tools. Reading does not require an account. Features, available chapters and published editorial text may change as the work develops. Some Allexi chapters are still being prepared."
+      },
+      {
+        "title": "Administrator accounts",
+        "body": "Sign-in and editorial tools are reserved for approved administrators in the browser web app. Keep your password and recovery codes private, use only accounts you are authorized to access, and contact support if you suspect unauthorized access. Administrator access does not give permission to access another person’s private study data."
+      },
+      {
+        "title": "Study material and editorial submissions",
+        "body": "You retain any rights you hold in your own notes and other original material. Submit editorial text only when you have permission to do so. When an administrator publishes an editorial revision, it becomes available to readers. Published scripture and editorial revision history can remain after an account is deleted, as described in the Privacy policy."
+      },
+      {
+        "title": "Scripture and third-party materials",
+        "body": "Scripture editions, editorial contributions, app software, fonts and other third-party materials may carry different rights and permissions. Respect the notices and permissions applicable to each material. These terms do not grant additional rights to third-party materials or replace applicable app-store license terms."
+      },
+      {
+        "title": "Acceptable use",
+        "body": "Do not attempt to bypass access controls, impersonate an administrator, obtain another person’s private information, disrupt the service, distribute harmful code or use the service unlawfully. We may restrict administrator access when needed to investigate misuse or protect the service."
+      },
+      {
+        "title": "Privacy and account deletion",
+        "body": "Our Privacy policy explains how the app handles study data, administrator account information and service logs. Administrators can request account deletion in the web app’s Settings or by emailing support. Account deletion does not automatically remove previously published scripture or every copy retained by another device or provider backup."
+      },
+      {
+        "title": "Availability and changes",
+        "body": "We work to maintain the app, but do not promise uninterrupted access, error-free operation or that every feature will remain available. Updates may change features or published content. Nothing in these terms excludes rights or remedies that cannot be excluded under applicable law."
+      },
+      {
+        "title": "Updates to these terms",
+        "body": "We may revise these terms as the app or service changes. The date on this page identifies the latest revision. Review updated terms when using the service and contact us if you have questions."
+      },
+      {
+        "title": "Contact",
+        "body": "For questions about these terms, contact Allexi Bible at Allexhairdrick@icloud.com. Never include passwords or recovery codes in a support message."
+      }
+    ]
   }
 }

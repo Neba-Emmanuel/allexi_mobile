@@ -80,7 +80,7 @@ export default function Settings({
   }
   if (helpPage)
     return (
-      <Sheet visible={visible} title={helpPage === "support" ? "Support" : "Privacy policy"} onClose={onClose}>
+      <Sheet visible={visible} title={helpPage === "support" ? "Support" : helpPage === "privacy" ? "Privacy policy" : "Terms of Service"} onClose={onClose}>
         <Help key={helpPage} page={helpPage} onBack={() => setHelpPage(null)} onNavigate={setHelpPage} />
       </Sheet>
     );
@@ -305,7 +305,7 @@ export default function Settings({
       </>
       ) : null}
       <View style={{ height: 1, backgroundColor: t.line }} />
-      <Label>PRIVACY & SUPPORT</Label>
+      <Label>SUPPORT & LEGAL</Label>
       <Txt muted style={{ fontSize: 12 }}>
         Read without an account. Contact us for help, privacy questions, or
         account deletion requests.
@@ -315,6 +315,9 @@ export default function Settings({
       </Button>
       <Button secondary icon="shield" onPress={() => setHelpPage("privacy")}>
         Privacy policy
+      </Button>
+      <Button secondary icon="file-text" onPress={() => setHelpPage("terms")}>
+        Terms of Service
       </Button>
       <Label>READING EDITION</Label>
       <Txt muted style={{ fontSize: 12 }}>

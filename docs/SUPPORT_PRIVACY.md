@@ -1,25 +1,41 @@
-# Support and privacy pages
+# Support, Privacy and Terms pages
 
-Settings includes Support and Privacy screens on iOS, Android and web. Both are available without signing in or opening an external website. Contact actions open the user's email app, addressed to `Allexhairdrick@icloud.com`; deletion requests use the subject `Account deletion`. These actions open a draft, and do not send email automatically.
+Settings includes Support, Privacy policy and Terms of Service screens on iOS, Android and web. All are available without signing in. Contact actions open a draft in the user's email app, addressed to `Allexhairdrick@icloud.com`; account-deletion requests use the subject `Account deletion`.
 
-The shared content is in `src/data/help.json`. Update the support address or policy there, then run `npm run build:help` to refresh the standalone pages:
+The shared content is in `src/data/help.json`. Update the text there, then run `npm run build:help` to regenerate:
 
-- `public/support/index.html`
-- `public/privacy/index.html`
-- `public/help.css` contains their shared styles.
+- `public/support/index.html` and `public/support.html`
+- `public/privacy/index.html` and `public/privacy.html`
+- `public/terms/index.html` and `public/terms.html`
 
-`npm run export:web` and `npm run export:all` regenerate these pages and include them in the export. They need no login, JavaScript, cookies or third-party fonts. Both pages support narrow screens and the visitor's light/dark preference.
+`public/help.css` supplies their shared styles. Every page links to the reader and the other help/legal pages. The directory pages and flat HTML aliases contain full HTML and do not require login, cookies, third-party fonts or application startup.
 
-## Hosting for store listings
+## Routing and hosting
 
-Host the contents of `public/` on your existing static website, or host the Expo web export. Preserve the directory structure so `/support/`, `/privacy/` and `/help.css` resolve. Configure the host to serve directory `index.html` files before any single-page application fallback. Test both URLs in a signed-out browser.
+The website supports `/support`, `/privacy` and `/terms`, with or without a trailing slash. The flat HTML files support clean-URL hosts. If a host falls back to the reader's single-page HTML for a slashless path, the web entry redirects to the matching static directory page before mounting the app. It preserves query strings and anchors and does not redirect the reader root or unrelated paths. Native startup is unchanged.
 
-On Expo Hosting, use the trailing slash in both public URLs: `https://YOUR_HOST.expo.app/support/` and `https://YOUR_HOST.expo.app/privacy/`. Without the slash, the current single-page export serves the reader's `index.html` instead of the directory's page, even though the response is HTTP 200. The explicit `/support/index.html` and `/privacy/index.html` URLs also work. Check the HTML title and content, not only the response code.
+The earlier export had only directory pages. On Expo Hosting, a URL without its final slash could therefore serve the reader rather than the requested page, even with HTTP 200. Re-export and redeploy to install the route fix; changing environment variables alone does not update an existing deployment.
 
-The deployed pages were verified at `https://allexibible.expo.app/support/` and `https://allexibible.expo.app/privacy/`. Use these exact URLs (including the final slash) in App Store Connect, Google Play, EAS and GitHub environment variables. The production Expo alias keeps these store links stable across deployments.
+Production links:
 
-Set `EXPO_PUBLIC_SUPPORT_URL` and `EXPO_PUBLIC_PRIVACY_URL` to those public HTTPS URLs in EAS production and GitHub's production environment, and use the same URLs in App Store Connect and Google Play Console. The files are ready locally; this change does not publish a website.
+- `https://allexibible.expo.app/support`
+- `https://allexibible.expo.app/privacy`
+- `https://allexibible.expo.app/terms`
 
-Before store publication, the operator should confirm the privacy copy against its actual hosting, email providers and backup retention arrangements. The existing backend data-practice notes are in `../allexi_backend/docs/PRIVACY.md` relative to the mobile project. Keep the public policy revision date current when practices change.
+The trailing-slash and explicit `index.html` forms continue to work. Existing support/privacy environment values may retain their canonical trailing slashes.
 
-Login and account deletion in Settings are available to approved administrators in the browser web app. The installed iOS and Android app has no sign-in, signup, admin workspace or study sync. Published content updates continue without authentication. Support and Privacy remain accessible on every platform.
+From the mobile project, deploy to the linked Expo project's production alias with:
+
+```sh
+npm run deploy:web
+```
+
+This exports current web code and generated pages into ignored `.expo/web-release/`, then runs Expo Hosting deployment. It does not build or submit native store binaries. You must be signed into Expo with access to the linked project, and local public environment values must point to production services. For another static host, publish the exported files and preserve their structure; configure directory index files before the SPA fallback.
+
+Set store-listing support/privacy URLs and EAS/GitHub production public variables to the production domain. No new required environment variable is needed for Terms. In-app Terms becomes available in the next native build containing this change.
+
+## Content and verification
+
+The Terms page describes current reader/admin behavior, acceptable use, editorial submissions, third-party rights, availability, privacy and the real support contact. It does not invent a legal company name, jurisdiction or retention period. The app operator should review public legal text against its own identity, distribution arrangements and actual service practices before relying on it.
+
+Run `npm run test:help` for routing and generated-page checks, `npm run typecheck` for native/web screen integration, and `npm run export:web` for the deployable bundle. Verify the title, text and links of each live page, rather than checking only for HTTP 200.
